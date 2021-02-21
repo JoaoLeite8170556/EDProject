@@ -67,15 +67,13 @@ public class Jogo {
                     pontosDeVida=0;
             }else{
                 
-                if(inimigoTmp==1){
-                pontosDeVida=pontosDeVida-
-                    this.mapa.getDivisoes().getEdgeWeight(opcao, caminhoPercorrido.last());
-                }else if(this.mapa.getDivisoes().getEdgeWeight(opcao, caminhoPercorrido.last())>1 
-                        && inimigoTmp==1){
-                    inimigoTmp=0;
-                }else if(this.mapa.getDivisoes().getEdgeWeight(opcao, caminhoPercorrido.last())>1 
+                if(this.mapa.getDivisoes().getEdgeWeight(opcao, caminhoPercorrido.last())>1 
                         && inimigoTmp==0){
+                    pontosDeVida=pontosDeVida-
+                            this.mapa.getDivisoes().getEdgeWeight(opcao, caminhoPercorrido.last());
                     inimigoTmp=1;
+                }else{
+                    inimigoTmp=0;
                 }
                 
                 
