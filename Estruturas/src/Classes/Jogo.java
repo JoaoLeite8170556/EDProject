@@ -10,7 +10,10 @@ import Excepcoes.EmptyExcpetion;
 import java.io.*;
 import java.util.Iterator;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.print.DocFlavor;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -29,9 +32,10 @@ public class Jogo {
         this.mapa=mapa;
     }
     
-    public void modoManual() throws IOException, EmptyExcpetion{
+    public void modoManual() throws IOException, EmptyExcpetion, FileNotFoundException, ParseException, ParseException, ParseException, ParseException, ParseException, ParseException, ParseException{
         double pontosDeVida = this.pontosVida;
-        int inimigoTmp = 0;
+        int alvo = 0;
+        Inimigo inimigoAux = null;
         String opcao = defineEntrada(); 
         String opcaotmp = null;
         UnorderedArrayList <String> caminhoPercorrido = new UnorderedArrayList<String>();
@@ -40,7 +44,15 @@ public class Jogo {
         if(!opcao.equals("-1")){
            caminhoPercorrido.addToRear(opcao); 
         }
+        
         do{
+            try {
+                    inimigoAux = this.mapa.verificaInimigo(opcao);
+                    if(inimigoAux!=null){
+                        pontosDeVida=pontosDeVida-inimigoAux.getPoder();
+                    }
+                } catch (ParseException ex) {
+                }
             System.out.println("Divisao atual: "+ opcao + "\n");
             mapa.getDivisoes().mostraVerticesAdjacentes(opcao);
             System.out.println("Sair\n");
@@ -66,17 +78,6 @@ public class Jogo {
             if(opcao.equals("Sair")){
                     pontosDeVida=0;
             }else{
-                
-                if(this.mapa.getDivisoes().getEdgeWeight(opcao, caminhoPercorrido.last())>1 
-                        && inimigoTmp==0){
-                    pontosDeVida=pontosDeVida-
-                            this.mapa.getDivisoes().getEdgeWeight(opcao, caminhoPercorrido.last());
-                    inimigoTmp=1;
-                }else{
-                    inimigoTmp=0;
-                }
-                
-                
                 
                 System.out.println(pontosDeVida+"\n");
                 caminhoPercorrido.addToRear(opcao);

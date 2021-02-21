@@ -20,21 +20,24 @@ import org.json.simple.parser.ParseException;
  * @author celio
  */
 public class Mapa {
-      private String codMissao;
+    
+    private String codMissao;
     private int versao;
     private final UnorderedArrayList<Inimigo> inimigos; 
     private final UnorderedArrayList<String> saidas;
     private final UnorderedArrayList<String> entradas;
     private Alvo alvo;
     private final NetworkJogo<String> divisoes;
-   
+    private String caminho;
+    
 
-    public Mapa(){   
+    public Mapa(String caminho){   
         this.inimigos = new UnorderedArrayList<Inimigo>();
         this.saidas = new UnorderedArrayList<String>();
         this.entradas = new UnorderedArrayList<String>();
         this.divisoes = new NetworkJogo<String>();
         this.alvo  = null;
+        this.caminho = caminho;
     }
 
     public String getCodMissao() {
@@ -50,7 +53,7 @@ public class Mapa {
 
     public Mapa loadMapa(String caminho) throws FileNotFoundException, IOException, ParseException{
         
-        Mapa mapa = new Mapa();
+        Mapa mapa = new Mapa(caminho);
         JSONParser jSONParser = new JSONParser();
         FileReader reader = new FileReader(caminho);
         Object obj = jSONParser.parse(reader);
@@ -131,14 +134,11 @@ public class Mapa {
     }
     
     
-    public void addEdge(JSONObject edge){
-        double poder=0;
-        
-        JSONArray jsonInimigos = (JSONArray) edge.get("inimigos");
-        
+    
+    
+    public String retornaAlvo(){
+        return this.getAlvos().getDivisao(); 
     }
-    
-    
     
     
 
@@ -204,13 +204,13 @@ public class Mapa {
         return "";
     }
     /**
-     * Este metodo vai verificar se a divisao tem algum Inimigo 
+     * Este metodo vai verificar se a divisao tem mais que um Inimigo
      * @param divisaoaux nome da divisao que se que verificar 
      * @param jsonInimigos  array onde estao todos os inimigos 
      * @return Inimigo caso haja inimigo na divisao 
      */
     
-    public Inimigo retornaInimigo(String divisaoaux, JSONArray jsonInimigos){
+    private Inimigo retornaInimigo(String divisaoaux, JSONArray jsonInimigos){
         
   
 
@@ -241,6 +241,37 @@ public class Mapa {
             
         return null;
     }
+    
+    /**
+     * Este metodo vai verificar se a divisao tem algum inimigo
+     * @param divisao divisao onde se quer verificar 
+     * @return Inimigo se houver e null see nao ouver nenhum inimigo
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws ParseException 
+     */
+    
+    public Inimigo verificaInimigo(String divisao) throws FileNotFoundException, IOException, ParseException{
+        
+        JSONParser jSONParser = new JSONParser();
+        FileReader reader = new FileReader(this.caminho);
+        Object obj = jSONParser.parse(reader);
+        JSONObject jsonObject = (JSONObject) obj;
+        JSONArray jsonInimigos = (JSONArray) jsonObject.get("inimigos");
+        
+        Inimigo ini = null;
+        
+        for (Object inimigos:jsonInimigos) {
+            String div =  ((JSONObject) inimigos).get("divisao").toString();
+           
+            if(div.equals(divisao)){
+                ini = retornaInimigo(divisao, jsonInimigos);
+            }
+        }
+        
+        return ini;
+    }
+    
     
     private int inimigosRepetidos(String divisaoVerificar, String nomeVerificar, 
             JSONArray jsonInimigos){

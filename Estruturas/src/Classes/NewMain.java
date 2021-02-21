@@ -20,9 +20,8 @@ public class NewMain {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException, FileNotFoundException, ParseException, EmptyExcpetion {
-        Mapa mapa=new Mapa();
+        Mapa mapa=new Mapa("./mapa.json");
         
-        mapa.loadMapa("./mapa.json");
         
         Jogo jogo = new Jogo(mapa);
         
