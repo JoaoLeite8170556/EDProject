@@ -31,7 +31,7 @@ public class NetworkJogo<T> extends GraphWeight<T>{
      * @param vertex vertice a verificar seus vizinhos
      * @return a lista com os vertices
      */
-    public UnorderedArrayList<T> obtemVerticesAdjacentes(T vertex){
+    public Iterator <T> obtemVerticesAdjacentes(T vertex){
         
         UnorderedArrayList<T> resultList = new UnorderedArrayList<>();
         
@@ -50,14 +50,14 @@ public class NetworkJogo<T> extends GraphWeight<T>{
                 }
             } catch (EmptyExcpetion ex){}
         }
-        return resultList;
+        return resultList.iterator();
     }
     /**
      * Imprime os vertices adjacentes a determinado vertice
      * @param vertex vertice a imprimir os vertices adjacentes
      */
     public void mostraVerticesAdjacentes(T vertex){
-        Iterator itr = (Iterator) obtemVerticesAdjacentes(vertex);
+        Iterator itr = obtemVerticesAdjacentes(vertex);
         
         while(itr.hasNext()){
             System.out.println(itr.next());

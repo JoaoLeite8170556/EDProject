@@ -25,7 +25,7 @@ public class Mapa {
     private final UnorderedArrayList<Inimigo> inimigos; 
     private final UnorderedArrayList<String> saidas;
     private final UnorderedArrayList<String> entradas;
-    private final UnorderedArrayList<Alvo> alvos;
+    private Alvo alvo;
     private final NetworkJogo<String> divisoes;
    
 
@@ -34,7 +34,7 @@ public class Mapa {
         this.saidas = new UnorderedArrayList<String>();
         this.entradas = new UnorderedArrayList<String>();
         this.divisoes = new NetworkJogo<String>();
-        this.alvos  = new UnorderedArrayList<Alvo>();
+        this.alvo  = null;
     }
 
     public String getCodMissao() {
@@ -117,7 +117,15 @@ public class Mapa {
             Inimigo inimigo = new Inimigo(nome, poder, divisao);
             this.inimigos.addToRear(inimigo);
         }
-       
+        
+        
+        // guardar alvo.
+        
+        JSONObject jsonAlvo =  (JSONObject) jsonObject.get("alvo"); 
+
+        Alvo alvo = retornaAlvo(jsonAlvo);
+
+        this.alvo = alvo;
         
         return mapa;
     }
@@ -127,7 +135,6 @@ public class Mapa {
         double poder=0;
         
         JSONArray jsonInimigos = (JSONArray) edge.get("inimigos");
-        
         
     }
     
@@ -143,12 +150,30 @@ public class Mapa {
         return entradas;
     }
 
-    public UnorderedArrayList<Alvo> getAlvos() {
-        return alvos;
+    public Alvo getAlvos() {
+        return alvo;
     }
 
     public NetworkJogo<String> getDivisoes() {
         return divisoes;
+    }
+    
+    
+    /***
+     * Este metodo serve para retornar o alvo que esta decrito no JSON
+     * @param jsonAlvo JSONObejct que vai corresponder ao Alvo
+     * @return retorna um Alvo, do que foi retirado do ficheiro
+     */
+    
+    private Alvo retornaAlvo(JSONObject jsonAlvo){
+
+        Alvo alvoTemp = null;
+
+        String divisao =  ((JSONObject) jsonAlvo).get("divisao").toString();
+        String tipo = ((JSONObject) jsonAlvo).get("tipo").toString();
+
+        alvoTemp= new Alvo(tipo, divisao);
+        return alvoTemp;
     }
     
     /**

@@ -16,12 +16,23 @@ public class Alvo {
 
     public Alvo() {}
 
+    public Alvo(String tipo, String divisao) {
+        this.tipo = tipo;
+        this.divisao = divisao;
+    }
+    
+
     public String getTipo() {
         return tipo;
     }
 
     public String getDivisao() {
         return divisao;
+    }
+
+    @Override
+    public String toString() {
+        return "Alvo{" + "tipo=" + tipo + ", divisao=" + divisao + '}';
     }
   
 }

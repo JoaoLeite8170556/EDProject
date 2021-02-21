@@ -10,6 +10,7 @@ import Excepcoes.EmptyExcpetion;
 import java.io.*;
 import java.util.Iterator;
 import java.util.Scanner;
+import javax.print.DocFlavor;
 
 /**
  *
@@ -26,6 +27,70 @@ public class Jogo {
     public Jogo(Mapa mapa){
         this.pontosVida=100;
         this.mapa=mapa;
+    }
+    
+    public void modoManual() throws IOException, EmptyExcpetion{
+        double pontosDeVida = this.pontosVida;
+        String opcao = defineEntrada(); 
+        String opcaotmp = null;
+        UnorderedArrayList <String> caminhoPercorrido = new UnorderedArrayList<String>();
+        Scanner scanner = new Scanner(System.in);
+        
+        if(!opcao.equals("-1")){
+           caminhoPercorrido.addToRear(opcao); 
+        }
+        do{
+            System.out.println("Divisao atual: "+ opcao + "\n");
+            mapa.getDivisoes().mostraVerticesAdjacentes(opcao);
+            System.out.println("Sair\n");
+            
+            while (opcaotmp!=opcao) {
+                System.out.println("Escolha divisao para onde se quer mover: ");
+                opcaotmp = scanner.nextLine();
+                
+                if(opcaotmp.equals("Sair")){
+                    System.out.println("Saiu do Jogo!!\n");
+                    opcao=opcaotmp;
+                }else{
+                   if(!verificaOpcao(opcao, opcaotmp).equals("invalido")){
+                        opcao=opcaotmp;
+                        caminhoPercorrido.addToRear(opcao);
+                    }else{
+                        System.out.println("\nDivisao invalida, por favor tente outra vez!!\n");
+                    } 
+                }
+                   
+            }  
+            opcaotmp=null;
+            if(opcao.equals("Sair")){
+                    pontosDeVida=0;
+                }
+            
+            
+        }while(pontosDeVida>0 && verificarSaidas(opcao)==null);
+            
+        
+        
+        
+        
+    }
+    /**
+     * Verifica se a divisao escolhida pelo utilizador para a proxima jogada é valida
+     * @param opcao divisao em que se encontra o TO Cruz
+     * @param opcaoTmp divisao para a qual o To Cruz se quer mover 
+     * @return "invalido" caso a divisao escolhida nao seja valida e caso seja valida 
+     * é retornado a opcao para onde o To Cruz se vai mover
+     */
+    public String verificaOpcao(String opcao, String opcaoTmp){
+        
+        Iterator itr = mapa.getDivisoes().obtemVerticesAdjacentes(opcao);
+        
+        while(itr.hasNext()){
+            if(itr.next().equals(opcaoTmp)){
+                return opcaoTmp;
+            }
+        }
+        return "invalido";
     }
     
     /**
@@ -52,8 +117,8 @@ public class Jogo {
      * Este método vai imprimir todas as entradas no json.
      * @param mapa mapa onde queres imprimir as entradas.
      */
-    private void imprimeEntradas(Mapa mapa){
-        Iterator iterator = mapa.getEntradas().iterator();
+    private void imprimeEntradas(){
+        Iterator iterator = this.mapa.getEntradas().iterator();
         
         System.out.println("Entradas possiveis:"+"\n");
         
@@ -70,9 +135,9 @@ public class Jogo {
      * @return a entrada
      * @throws IOException 
      */
-    public String defineEntrada(Mapa mapa) throws IOException, EmptyExcpetion{
+    public String defineEntrada() throws IOException, EmptyExcpetion{
  
-        imprimeEntradas(mapa);
+        imprimeEntradas();
         Scanner scanner = new Scanner(System.in);
         String temp= "";
         
@@ -138,6 +203,7 @@ public class Jogo {
     * @throws IOException
     * @throws ArrayIsEmpty 
     */
+    
     public String defineSaida(Mapa mapa) throws IOException, EmptyExcpetion{
  
         imprimeSaidas(mapa);
@@ -163,6 +229,8 @@ public class Jogo {
         return temp;
 
     }
+    
+    
     
     public double getPontosVida(){
         return pontosVida;
