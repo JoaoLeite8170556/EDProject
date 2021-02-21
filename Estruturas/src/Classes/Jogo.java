@@ -96,5 +96,79 @@ public class Jogo {
 
     }
     
+    /**
+     * Este metodo vai verificar se o target existe como saida no JSON
+     * @param target a saida a verificar se existe
+     * @return o target se existir, se não retorna null
+     * @throws IOException
+     * @throws ArrayIsEmpty 
+     */
+    private String verificarSaidas(String target) throws IOException, EmptyExcpetion{
+        
+        UnorderedArrayList<String> tempList = mapa.getSaidas();
+        
+        boolean tempBool = tempList.contains(target);
+        
+        if(tempBool==true){
+            return target;
+        }else{
+            return null;
+        }
+    }
+    
+    /**
+     * Este método vai correr o UnorderedArray com as saidas que estão no JSON e 
+     * imprimi-las.
+     * @param mapa mapa originado da leitura do JSON
+     */ 
+    private void imprimeSaidas(Mapa mapa){
+        Iterator iterator = mapa.getSaidas().iterator();
+        
+        System.out.println("Saidas possiveis:");
+        
+        while(iterator.hasNext()){
+            System.out.println("-> "+iterator.next());
+        }
+    }
+    
+     /**
+    * Metodo que vai pedir qual a entrada que o deseja que o Tó Cruz acaba a sua missão.
+    * @param mapa ficheiro JSON
+    * @return a saida da missão.
+    * @throws IOException
+    * @throws ArrayIsEmpty 
+    */
+    public String defineSaida(Mapa mapa) throws IOException, EmptyExcpetion{
+ 
+        imprimeSaidas(mapa);
+        Scanner scanner = new Scanner(System.in);
+        String temp= "";
+        
+        do{
+            System.out.println("Introduza, corretamente a Saida na qual o Tó Cruz "
+                  + "deve sair do edificio: "+"\n");
+            System.out.println("Para terminar selecione: -1"+"\n");
+            
+            temp = scanner.nextLine();
+
+            if(temp.equals("-1")){
+                System.out.println("Saiu do programa.");
+            }
+            
+            if(temp.equals(verificarEntrada(temp))){
+                System.out.println("A saida escolhida é "+temp+"\n");
+            }
+            
+        }while(!temp.equals(verificarSaidas(temp)) && !temp.equals("-1"));
+        return temp;
+
+    }
+    
+    public double getPontosVida(){
+        return pontosVida;
+    }
+
+    
+    
     
 }
