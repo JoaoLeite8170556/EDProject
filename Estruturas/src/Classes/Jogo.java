@@ -31,10 +31,11 @@ public class Jogo {
     
     public void modoManual() throws IOException, EmptyExcpetion{
         double pontosDeVida = this.pontosVida;
+        int inimigoTmp = 0;
         String opcao = defineEntrada(); 
         String opcaotmp = null;
         UnorderedArrayList <String> caminhoPercorrido = new UnorderedArrayList<String>();
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in,"ISO-8859-1");
         
         if(!opcao.equals("-1")){
            caminhoPercorrido.addToRear(opcao); 
@@ -54,7 +55,7 @@ public class Jogo {
                 }else{
                    if(!verificaOpcao(opcao, opcaotmp).equals("invalido")){
                         opcao=opcaotmp;
-                        caminhoPercorrido.addToRear(opcao);
+                        
                     }else{
                         System.out.println("\nDivisao invalida, por favor tente outra vez!!\n");
                     } 
@@ -64,16 +65,31 @@ public class Jogo {
             opcaotmp=null;
             if(opcao.equals("Sair")){
                     pontosDeVida=0;
+            }else{
+                
+                if(inimigoTmp==1){
+                pontosDeVida=pontosDeVida-
+                    this.mapa.getDivisoes().getEdgeWeight(opcao, caminhoPercorrido.last());
+                }else if(this.mapa.getDivisoes().getEdgeWeight(opcao, caminhoPercorrido.last())>1 
+                        && inimigoTmp==1){
+                    inimigoTmp=0;
+                }else if(this.mapa.getDivisoes().getEdgeWeight(opcao, caminhoPercorrido.last())>1 
+                        && inimigoTmp==0){
+                    inimigoTmp=1;
                 }
+                
+                
+                
+                System.out.println(pontosDeVida+"\n");
+                caminhoPercorrido.addToRear(opcao);
+            }
             
             
         }while(pontosDeVida>0 && verificarSaidas(opcao)==null);
-            
-        
-        
-        
         
     }
+    
+    
     /**
      * Verifica se a divisao escolhida pelo utilizador para a proxima jogada é valida
      * @param opcao divisao em que se encontra o TO Cruz
