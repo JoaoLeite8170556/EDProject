@@ -32,7 +32,7 @@ public class Jogo {
      * Este metodo vai verificar se o target existe como entrada no JSON
      * @param target target a procurar
      * @return o target se existir, se não existir, retorna null;
-     * @throws IOException
+     * @throws IOException a
      * @throws ArrayIsEmpty 
      */
     private String verificarEntrada(String target) throws IOException, EmptyExcpetion{
