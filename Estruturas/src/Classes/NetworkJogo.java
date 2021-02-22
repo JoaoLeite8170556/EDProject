@@ -6,9 +6,12 @@
 package Classes;
 
 import Colecoes.GraphWeight;
+import Colecoes.LinkedQueue;
 import Colecoes.UnorderedArrayList;
 import Excepcoes.EmptyExcpetion;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -31,7 +34,7 @@ public class NetworkJogo<T> extends GraphWeight<T>{
      * @param vertex vertice a verificar seus vizinhos
      * @return a lista com os vertices
      */
-    public UnorderedArrayList<T> obtemVerticesAdjacentes(T vertex){
+    public Iterator <T> obtemVerticesAdjacentes(T vertex){
         
         UnorderedArrayList<T> resultList = new UnorderedArrayList<>();
         
@@ -50,14 +53,14 @@ public class NetworkJogo<T> extends GraphWeight<T>{
                 }
             } catch (EmptyExcpetion ex){}
         }
-        return resultList;
+        return resultList.iterator();
     }
     /**
      * Imprime os vertices adjacentes a determinado vertice
      * @param vertex vertice a imprimir os vertices adjacentes
      */
     public void mostraVerticesAdjacentes(T vertex){
-        Iterator itr = (Iterator) obtemVerticesAdjacentes(vertex);
+        Iterator itr = obtemVerticesAdjacentes(vertex);
         
         while(itr.hasNext()){
             System.out.println(itr.next());
@@ -96,6 +99,46 @@ public class NetworkJogo<T> extends GraphWeight<T>{
         }
     }
     
+
+
+    public Iterator<T> iteratorBFS(int startIndex) throws EmptyExcpetion
+   {
+       Integer x;
+       LinkedQueue<Integer> traversalQueue = new LinkedQueue<Integer>();
+       UnorderedArrayList<T> resultList = new UnorderedArrayList<T>();
+
+      if (validIndex(startIndex)==-1)
+         return resultList.iterator();
+
+      boolean[] visited = new boolean[numVertices];
+      for (int i = 0; i < numVertices; i++)
+         visited[i] = false;
+
+
+      traversalQueue.enqueue(new Integer(startIndex));
+      visited[startIndex] = true;
+
+      while (!traversalQueue.isEmpty())
+      {
+          x = traversalQueue.dequeue();
+          resultList.addToRear(vertices[x.intValue()]);
+          /** Find all vertices adjacent to x that have not been
+           * visited and queue them up */
+          
+          for (int i = 0; i < numVertices; i++)
+          {
+              if((weights[x.intValue()][i] < Double.POSITIVE_INFINITY)
+                      && !visited[i])
+              {
+                  traversalQueue.enqueue(new Integer(i));
+                  visited[i] = true;
+              }
+          }
+
+      }
+      return resultList.iterator();
+   }
+
    
     
     /**
