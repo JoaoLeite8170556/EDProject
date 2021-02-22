@@ -10,6 +10,8 @@ import Excepcoes.EmptyExcpetion;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Random;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -51,11 +53,11 @@ public class Mapa {
         return inimigos;
     }
 
-    public Mapa loadMapa(String caminho) throws FileNotFoundException, IOException, ParseException{
+    public Mapa loadMapa() throws FileNotFoundException, IOException, ParseException{
         
-        Mapa mapa = new Mapa(caminho);
+        Mapa mapa = new Mapa(this.caminho);
         JSONParser jSONParser = new JSONParser();
-        FileReader reader = new FileReader(caminho);
+        FileReader reader = new FileReader(this.caminho);
         Object obj = jSONParser.parse(reader);
         
         JSONObject jsonObject = (JSONObject) obj;
@@ -134,14 +136,6 @@ public class Mapa {
     }
     
     
-    
-    
-    public String retornaAlvo(){
-        return this.getAlvos().getDivisao(); 
-    }
-    
-    
-
     public UnorderedArrayList<String> getSaidas() {
         return saidas;
     }
@@ -203,6 +197,7 @@ public class Mapa {
         } catch (EmptyExcpetion ex){}
         return "";
     }
+    
     /**
      * Este metodo vai verificar se a divisao tem mais que um Inimigo
      * @param divisaoaux nome da divisao que se que verificar 
@@ -210,9 +205,7 @@ public class Mapa {
      * @return Inimigo caso haja inimigo na divisao 
      */
     
-    private Inimigo retornaInimigo(String divisaoaux, JSONArray jsonInimigos){
-        
-  
+    public Inimigo retornaInimigo(String divisaoaux, JSONArray jsonInimigos){
 
         for (Object inimigos:jsonInimigos) {
             String nome = ((JSONObject) inimigos).get("nome").toString();
@@ -243,48 +236,60 @@ public class Mapa {
     }
     
     /**
-     * Este metodo vai verificar se a divisao tem algum inimigo
-     * @param divisao divisao onde se quer verificar 
-     * @return Inimigo se houver e null see nao ouver nenhum inimigo
-     * @throws FileNotFoundException
-     * @throws IOException
-     * @throws ParseException 
+     * Este metodo vai percorrer todos os vertices do grafo com a travessia em largura 
+     * comparando quais nao contem inimigo
+     * @return Divisoes sem inimigo
+     * @throws EmptyExcpetion 
      */
-    
-    public Inimigo verificaInimigo(String divisao) throws FileNotFoundException, IOException, ParseException{
-        
-        JSONParser jSONParser = new JSONParser();
-        FileReader reader = new FileReader(this.caminho);
-        Object obj = jSONParser.parse(reader);
-        JSONObject jsonObject = (JSONObject) obj;
-        JSONArray jsonInimigos = (JSONArray) jsonObject.get("inimigos");
-        
-        Inimigo ini = null;
-        
-        for (Object inimigos:jsonInimigos) {
-            String div =  ((JSONObject) inimigos).get("divisao").toString();
-           
-            if(div.equals(divisao)){
-                ini = retornaInimigo(divisao, jsonInimigos);
+    private String[] guardaDivisoes() throws EmptyExcpetion{
+
+            String[] salasSemInimigo = new String[this.divisoes.size()];
+            int contador=0;
+
+
+            for(int i=0;i<this.getDivisoes().size();i++){
+
+                String divisao = this.getDivisoes().iteratorBFS(i).next();
+
+                if(verificaSeEInimigo(divisao)==false){
+                    salasSemInimigo[contador]=divisao;
+                    contador++;
+                }
             }
+
+            return salasSemInimigo;
         }
-        
-        return ini;
+
+    /**
+     * Corre um array de divisoes e escolhe uma divisao aliatoriamente 
+     * @return nome da Divisao
+     * @throws EmptyExcpetion 
+     */
+    public String randomRoom() throws EmptyExcpetion{
+        String[] divisoes = guardaDivisoes();
+        Random random = new Random();
+        int temp=0;
+
+        do{
+            temp = random.nextInt(divisoes.length);
+        }while(divisoes[temp]==null);
+
+        return divisoes[temp];
     }
-    
-    
-    private int inimigosRepetidos(String divisaoVerificar, String nomeVerificar, 
-            JSONArray jsonInimigos){
-        
-    
-        for (Object inimigos:jsonInimigos) {
-            String nome = ((JSONObject) inimigos).get("nome").toString();
-            Integer poder = Integer.parseInt(((JSONObject)inimigos).get("poder").toString());
-            String divisao =  ((JSONObject) inimigos).get("divisao").toString();
-             if(divisao.equals(divisaoVerificar) && !nome.equals(nomeVerificar)){
-                        return poder;
-                    }
-            }
-        return 0;
+
+
+    /**
+     * Verifica se uma divisãoo tem inimigos 
+     * @param divisao divisao a comparar 
+     * @return true se a divisao tiver inimigo, false se nao 
+     */
+    private boolean verificaSeEInimigo(String divisao){
+        Iterator itr = this.inimigos.iterator();
+            while(itr.hasNext()){
+                Inimigo inimigo = (Inimigo) itr.next();
+            if(inimigo.getDivisao().equals(divisao)){
+                    return true;}}
+
+        return false;
     }
 }
